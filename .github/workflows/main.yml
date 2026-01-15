@@ -7,7 +7,7 @@ on:
 
 jobs:
   rank_and_send:
-    name: Rand & Email
+    name: Rank & Email
     runs-on: ubuntu-latest
     
     permissions:
