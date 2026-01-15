@@ -33,9 +33,6 @@ jobs:
             echo "No keep-alive.txt file found"
           fi
 
-      - name: Update retriever target
-        run: echo ${{ vars.RETRIEVER_TARGET }}
-
       - name: Setup uv
         uses: astral-sh/setup-uv@v7
 
