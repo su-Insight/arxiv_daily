@@ -1,10 +1,8 @@
-import logging
 from typing import List, Tuple
 from .paper import ArxivPaper
 from .llm import LLM, set_global_llm
 import time
-
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 def rerank_paper(papers: List[ArxivPaper], retriever_target: str, model: str = "meta-llama/Llama-3.2-3B-Instruct", model_url: str = "llama-3.2-3b-instruct.Q4_K_M.gguf") -> List[ArxivPaper]:
     """

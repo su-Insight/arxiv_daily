@@ -1,10 +1,8 @@
-import logging
 import time
 from typing import Optional
 from llama_cpp import Llama
 from openai import OpenAI
-
-logger = logging.getLogger(__name__)
+from loguru import logger
 
 GLOBAL_LLM = None
 

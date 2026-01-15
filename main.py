@@ -1,22 +1,18 @@
 import arxiv
 import argparse
-import logging
 import os
 import feedparser
+import sys
 from tqdm import tqdm
 from src.paper import ArxivPaper
 from src.rerank import rerank_paper
 from src.llm import destroy_global_llm, set_global_llm
 from src.construct_email import render_email, send_email
-
-
+from loguru import logger
 
 # 配置日志
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+logger.remove()  # 移除默认的日志配置
+logger.add(sys.stdout, level="INFO", format="{time} - {name} - {level} - {message}")
 
 def get_arxiv_paper(query: str, debug: bool = False) -> list[ArxivPaper]:
     client = arxiv.Client(num_retries=10, delay_seconds=10)
