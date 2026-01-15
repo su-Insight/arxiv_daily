@@ -1,9 +1,8 @@
 <p align="center">
   <a href="" rel="noopener">
- <img width=200px height=200px src="[https://via.placeholder.com/200?text=ARXIV+RADAR](https://via.placeholder.com/200?text=ARXIV+RADAR)" alt="logo"></a>
+ <img width="125" height="125" alt="image" src="https://github.com/user-attachments/assets/cda1b560-6e33-4446-9013-39855a326a62" /></a>
 </p>
 
-<h3 align="center">ArXiv Radar</h3>
 
 <div align="center">
 
@@ -14,6 +13,7 @@
   ![License](https://img.shields.io/github/license/su-Insight/arxiv_radar)
 
 </div>
+<h3 align="center">ArXiv Radar</h3>
 
 <p align="center"> 🚀 每日根据您的科研兴趣，利用本地 LLM 智能检索、语义重排并推送 ArXiv 最新论文。
     <br> 
