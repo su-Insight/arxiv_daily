@@ -3,14 +3,16 @@ name: Daily Paper Sender
 on:
   workflow_dispatch:
   schedule:
-  - cron: '0 20 * * *'
+    - cron: '0 20 * * *'
 
 jobs:
   rank_and_send:
-  name: Rand & Email
-  runs-on: ubuntu-latest
-  permissions:
-    contents: write
+    name: Rand & Email
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -32,7 +34,7 @@ jobs:
           fi
 
       - name: Update retriever target
-        
+        run: echo ${{ vars.RETRIEVER_TARGET }}
 
       - name: Setup uv
         uses: astral-sh/setup-uv@v7
