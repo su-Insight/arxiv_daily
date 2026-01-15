@@ -6,11 +6,8 @@ import feedparser
 from tqdm import tqdm
 from src.paper import ArxivPaper
 from src.rerank import rerank_paper
-from llm import destroy_global_llm
-
-
-from construct_email import render_email, send_email
-from llm import set_global_llm
+from src.llm import destroy_global_llm, set_global_llm
+from src.construct_email import render_email, send_email
 
 
 
@@ -157,7 +154,9 @@ if __name__ == '__main__':
             logger.info("Using Local LLM as global LLM.")
             set_global_llm(lang=args.language)
     print(papers)
-    html = render_email(papers)
+    # Prepare interests for render_email
+    interests = [interest.strip() for interest in args.retriever_target.split('\n') if interest.strip()]
+    html = render_email(papers, interests)
     logger.info("Sending email...")
     send_email(args.sender, args.receiver, args.sender_password, args.smtp_server, args.smtp_port, html)
     logger.success("Email sent successfully! If you don't receive the email, please check the configuration and the junk box.")

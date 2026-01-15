@@ -5,7 +5,7 @@ import arxiv
 import tarfile
 import re
 import time
-from llm import get_llm
+from .llm import get_llm
 import requests
 from requests.adapters import HTTPAdapter, Retry
 from loguru import logger

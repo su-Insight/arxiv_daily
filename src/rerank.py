@@ -1,7 +1,7 @@
 import logging
 from typing import List, Tuple
-from paper import ArxivPaper
-from llm import LLM, set_global_llm
+from .paper import ArxivPaper
+from .llm import LLM, set_global_llm
 import time
 
 logger = logging.getLogger(__name__)
