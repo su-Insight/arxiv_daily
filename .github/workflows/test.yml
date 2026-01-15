@@ -1,4 +1,4 @@
-name: Daily Paper Sender
+name: Test - Daily Paper Sender
 
 on:
   workflow_dispatch:
