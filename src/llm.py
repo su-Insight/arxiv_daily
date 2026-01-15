@@ -7,10 +7,13 @@ from loguru import logger
 GLOBAL_LLM = None
 
 class LLM:
-    def __init__(self, model: str, 
-                api_key: str = None, base_url: str = None, 
-                model_path: str = None, n_ctx: int = 5000, n_threads: int = 4, verbose: bool = False,
+    def __init__(self, api_key: str = None, base_url: str = None, 
+                model: str = "meta-llama/Llama-3.2-3B-Instruct", model_path: str = "llama-3.2-3b-instruct.Q4_K_M.gguf", 
+                n_ctx: int = 5000, n_threads: int = 4, verbose: bool = False,
                 lang:str = "English"):
+        self.model = model
+        self.lang = lang
+        
         if api_key:
             self.llm = OpenAI(api_key=api_key, base_url=base_url)
         else:
@@ -21,9 +24,6 @@ class LLM:
                 n_threads=n_threads,
                 verbose=verbose,
             )
-
-        self.model = model
-        self.lang = lang
 
     def generate(self, messages: list[dict]) -> str:
         if isinstance(self.llm, OpenAI):
@@ -43,9 +43,9 @@ class LLM:
             return response["choices"][0]["message"]["content"]
 
 
-def set_global_llm(api_key: str = None, base_url: str = None, model: str = None, lang: str = "English"):
+def set_global_llm(api_key: str = None, base_url: str = None, model: str = None, model_path: str = None, lang: str = "English"):
     global GLOBAL_LLM
-    GLOBAL_LLM = LLM(api_key=api_key, base_url=base_url, model=model, lang=lang)
+    GLOBAL_LLM = LLM(api_key=api_key, base_url=base_url, model=model, model_path=model_path, lang=lang)
 
 def get_llm() -> LLM:
     if GLOBAL_LLM is None:
