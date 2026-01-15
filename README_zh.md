@@ -46,12 +46,25 @@
 
 ### 快速开始
 
-1. **Fork 本仓库** (别忘了点个 Star 😉)。
+1. **Fork 本仓库** (别忘点个 Star 哦 😉)
+
+
+<div align="left">
+  
+| <img width="839" height="634" alt="image" src="https://github.com/user-attachments/assets/95d6c54a-e781-4cd5-8a33-9f2f6d5b1ace" /> |
+| :---: |
+
+</div>
 
 2. **设置 GitHub Secrets**：
    进入仓库 `Settings -> Secrets and variables -> Actions`，添加以下 `Repository secrets`：
-<img style="box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-radius: 12px;" width="845" height="572" alt="image" src="https://github.com/user-attachments/assets/b3a4b5f6-a2af-4786-b1dd-5d6b7cb170bc" />
+   
+<div align="left">
+  
+| <img width="845" height="572" alt="image" src="https://github.com/user-attachments/assets/b3a4b5f6-a2af-4786-b1dd-5d6b7cb170bc"  /> |
+| :---: |
 
+</div>
 
 | 变量名 | 必填 | 类型 | 描述 | 示例 |
 | :--- | :---: | :--- | :--- | :--- |
@@ -65,6 +78,15 @@
 | OPENAI_API_KEY | | str | API Key (若使用 API 则必填)。 | sk-xxxxxxxx |
 > SMTP的申请直接在网页搜索对应邮箱+SMTP即可
 3. **设置 Repository Variables** (公开变量，方便随时修改)：
+
+
+<div align="left">
+  
+| <img width="853" height="608" alt="image" src="https://github.com/user-attachments/assets/7476b989-8c7b-4fc4-b494-2785e6de8117" /> |
+| :---: |
+
+</div>
+
 
 | 变量名 | 必填 | 类型 | 描述 | 示例 |
 | :--- | :--- | :--- | :--- | :--- |
@@ -102,6 +124,22 @@ Edge Detection
 
 ---
 
+
+## 🧪 测试与验证 (Testing) <a name = "testing"></a>
+
+在正式开始每日自动推送之前，您可以通过手动触发测试工作流来验证配置是否成功：
+
+1. 进入您 Fork 仓库的 **Actions** 选项卡。
+2. 在左侧列表中选择 **`Test-Daily Paper Sender`**。
+3. 点击右侧的 **`Run workflow`** 下拉菜单，点击绿色的 **`Run workflow`** 按钮。
+
+> [!NOTE]
+> **测试版 vs 正式版**：
+> - **Test-Workflow**: 专门用于调试。它会忽略日期限制，固定检索 5 篇 ArXiv 论文，方便您立即查看邮件排版和 LLM 评分结果。
+> - **正式工作流 (Main)**: 每天 UTC 20:00 自动触发，仅检索过去 24 小时发布的新论文。
+
+
+
 ## 💻 本地运行
 
 本项目支持 [uv](https://github.com/astral-sh/uv) 驱动，可以轻松在本地环境运行：
@@ -118,18 +156,7 @@ uv run main.py
 > [!IMPORTANT]
 > 运行本地模型将自动下载 **Qwen2.5-3B-Instruct/Llama3.2-3B-Instruct** (约 3GB)。请确保您的网络环境稳定且内存不少于 8GB。
 
-## 🧪 测试与验证 (Testing) <a name = "testing"></a>
 
-在正式开始每日自动推送之前，您可以通过手动触发测试工作流来验证配置是否成功：
-
-1. 进入您 Fork 仓库的 **Actions** 选项卡。
-2. 在左侧列表中选择 **`Test-Daily Paper Sender`**。
-3. 点击右侧的 **`Run workflow`** 下拉菜单，点击绿色的 **`Run workflow`** 按钮。
-
-> [!NOTE]
-> **测试版 vs 正式版**：
-> - **Test-Workflow**: 专门用于调试。它会忽略日期限制，固定检索 5 篇 ArXiv 论文，方便您立即查看邮件排版和 LLM 评分结果。
-> - **正式工作流 (Main)**: 每天 UTC 20:00 自动触发，仅检索过去 24 小时发布的新论文。
 
 ## 📖 工作原理
 
