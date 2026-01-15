@@ -3,6 +3,7 @@ from .paper import ArxivPaper
 from .llm import LLM, set_global_llm
 import time
 from loguru import logger
+import json
 
 def rerank_paper(papers: List[ArxivPaper], retriever_target: str, model: str = "bartowski/Llama-3.2-3B-Instruct-GGUF", model_url: str = "Llama-3.2-3B-Instruct-Q4_K_M.gguf") -> List[ArxivPaper]:
     """
@@ -84,19 +85,19 @@ Output: {"LLM": 5, "Software Testing": 0}
     target_interests = json.dumps(interests)
     
     prompt = f"""
-{few_shot_context}
+        {few_shot_context}
 
-### Current Task:
-User Interests: {target_interests}
-Paper Title: {paper.title}
-Paper Abstract: {paper.summary[:1200]}
+        ### Current Task:
+        User Interests: {target_interests}
+        Paper Title: {paper.title}
+        Paper Abstract: {paper.summary[:1200]}
 
-### Requirement:
-- Return ONLY the JSON object.
-- Scores must be integers between 0 and 100.
-- No explanation.
+        ### Requirement:
+        - Return ONLY the JSON object.
+        - Scores must be integers between 0 and 100.
+        - No explanation.
 
-Output:"""
+        Output:"""
 
     try:
         response = llm.generate([
