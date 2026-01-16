@@ -1,25 +1,18 @@
 import arxiv
 import argparse
-import logging
 import os
 import feedparser
+import sys
 from tqdm import tqdm
 from src.paper import ArxivPaper
 from src.rerank import rerank_paper
-from llm import destroy_global_llm
-
-
-from construct_email import render_email, send_email
-from llm import set_global_llm
-
-
+from src.llm import destroy_global_llm, set_global_llm
+from src.construct_email import render_email, send_email
+from loguru import logger
 
 # 配置日志
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+logger.remove()  # 移除默认的日志配置
+logger.add(sys.stdout, level="INFO", format="{time} - {name} - {level} - {message}")
 
 def get_arxiv_paper(query: str, debug: bool = False) -> list[ArxivPaper]:
     client = arxiv.Client(num_retries=10, delay_seconds=10)
@@ -83,8 +76,7 @@ if __name__ == '__main__':
     add_argument(
         "--retriever_target",
         type=str,
-        help="Retriever target domain, such as 'agent' or 'software test'",
-        default="LLM",
+        help="Retriever target domain, such as 'agent' or 'software test'"
     )
     add_argument(
         "--use_llm_api",
@@ -118,6 +110,8 @@ if __name__ == '__main__':
     )
     parser.add_argument('--debug', action='store_true', help='Debug mode')
     args = parser.parse_args()
+
+    print(args)
 
     assert (
         not args.use_llm_api or args.openai_api_key is not None
@@ -155,9 +149,11 @@ if __name__ == '__main__':
             set_global_llm(api_key=args.openai_api_key, base_url=args.openai_api_base, model=args.model_name, lang=args.language)
         else:
             logger.info("Using Local LLM as global LLM.")
-            set_global_llm(lang=args.language)
+            set_global_llm(model="Qwen/Qwen2.5-3B-Instruct-GGUF", model_path="qwen2.5-3b-instruct-q4_k_m.gguf", lang=args.language)
     print(papers)
-    html = render_email(papers)
+    # Prepare interests for render_email
+    interests = [interest.strip() for interest in args.retriever_target.split('\n') if interest.strip()]
+    html = render_email(papers, interests)
     logger.info("Sending email...")
     send_email(args.sender, args.receiver, args.sender_password, args.smtp_server, args.smtp_port, html)
     logger.success("Email sent successfully! If you don't receive the email, please check the configuration and the junk box.")

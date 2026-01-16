@@ -1,17 +1,12 @@
-name: Daily Paper Sender
+name: Test - Daily Paper Sender
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 20 * * *'
 
 jobs:
   rank_and_send:
     name: Rank & Email
     runs-on: ubuntu-latest
-    
-    permissions:
-      contents: write
     
     steps:
       - name: Checkout code
@@ -54,22 +49,4 @@ jobs:
           LANGUAGE: ${{ vars.LANGUAGE }}
           LAST_TIME: ${{ env.LAST_TIME }}
         run: |
-          uv run main.py
-
-      - name: Update keep-alive file
-        run: |
-          mkdir -p .github
-          echo "Last run: $(date -u +'%Y-%m-%d %H:%M:%S UTC')" > .github/keep-alive.txt
-          echo "This file is automatically updated to keep the repository active and prevent GitHub Actions from disabling scheduled workflows." >> .github/keep-alive.txt
-
-      - name: Commit and push if changed
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .github/keep-alive.txt
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "chore: update keep-alive timestamp [skip ci]"
-            git push
-          fi
+          uv run main.py --debug

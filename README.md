@@ -1,5 +1,7 @@
 # ArXiv Radar
 
+[中文版本 (Chinese Version)](README_zh.md)
+
 ArXiv Radar是一个自动化工具，用于每日从ArXiv检索最新论文，使用本地LLM解析摘要，计算与用户定义关键字的相似度，并将最相关的前K篇论文通过邮件发送给用户。
 
 ## 功能特点
@@ -16,11 +18,18 @@ ArXiv Radar是一个自动化工具，用于每日从ArXiv检索最新论文，�
 
 ```
 arxiv_radar/
-├── main.py          # 主程序文件，包含所有核心逻辑
-├── config.py        # 配置文件，管理所有参数
-├── requirements.txt # 依赖库列表
-├── README.md        # 项目说明文档
-└── arxiv_radar.log  # 运行日志（自动生成）
+├── main.py                  # Main program file containing all core logic
+├── src/
+│   ├── llm.py              # LLM-related functions and utilities
+│   ├── paper.py            # Paper data structure and ArXiv API interactions
+│   ├── rerank.py           # Paper reranking logic using LLM
+│   └── construct_email.py  # Email construction and sending functions
+├── requirements.txt         # Dependencies list
+├── README.md               # Project documentation (English)
+├── README_zh.md            # Project documentation (Chinese)
+└── .github/
+    └── workflows/          # GitHub Actions workflows
+        └── main.yml        # Daily execution workflow
 ```
 
 ## 安装步骤
@@ -28,153 +37,112 @@ arxiv_radar/
 ### 1. 环境要求
 
 - Python 3.7+
-- 足够的磁盘空间（用于存储LLM模型，约100MB-2GB，取决于模型大小）
+- Sufficient disk space (for storing LLM models, approximately 100MB-2GB depending on model size)
 
 ### 2. 安装依赖
 
 ```bash
-# 安装项目依赖
+# Install project dependencies
 pip install -r requirements.txt
 ```
 
-## 配置说明
+## 配置
 
-编辑`config.py`文件，设置以下关键参数：
+### 1. GitHub Actions Secrets and Variables
 
-### 1. 核心配置
+Configure the following secrets and variables in your GitHub repository:
 
-```python
-# 搜索关键字列表（必填）
-keywords = ["machine learning", "artificial intelligence", "deep learning"]
+**Secrets:**
+- `ARXIV_QUERY`: ArXiv search query
+- `SMTP_SERVER`: SMTP server address
+- `SMTP_PORT`: SMTP server port
+- `SENDER`: Sender email address
+- `RECEIVER`: Receiver email address
+- `SENDER_PASSWORD`: Sender email password
+- `USE_LLM_API`: Whether to use OpenAI API (true/false)
+- `OPENAI_API_KEY`: OpenAI API key (required if USE_LLM_API is true)
+- `OPENAI_API_BASE`: OpenAI API base URL (optional)
+- `MODEL_NAME`: OpenAI model name (optional, default: gpt-4o)
 
-# ArXiv分类筛选（可选，留空表示不限制）
-# 常用分类示例：cs.AI, cs.CL, cs.CV, cs.LG, stat.ML
-arxiv_categories = []
+**Variables:**
+- `REPOSITORY`: Repository name (default: your GitHub username/arxiv_radar)
+- `REF`: Branch name (default: main)
+- `SEND_EMPTY`: Whether to send empty email when no papers found (true/false)
+- `MAX_PAPER_NUM`: Maximum number of papers to recommend
+- `RETRIEVER_TARGET`: Interest domains, one per line
+- `LANGUAGE`: Language for TLDR generation (default: English)
 
-# 每次最多获取的论文数量
-max_papers = 100
+## Usage
 
-# 发送前K篇最相关论文
-top_k = 10
-```
-
-### 2. LLM模型配置
-
-```python
-# 本地LLM模型名称或路径
-# 推荐模型：
-# - 小型模型（适合低配置设备）: all-MiniLM-L6-v2, distilbert-base-nli-stsb-mean-tokens
-# - 中型模型: all-mpnet-base-v2
-# - 大型模型: all-roberta-large-v1
-llm_model = "all-MiniLM-L6-v2"
-```
-
-### 3. 邮件发送配置
-
-```python
-# 发件人邮箱
-email_sender = "your_email@example.com"
-
-# 收件人邮箱（可以与发件人相同）
-email_receiver = "your_email@example.com"
-
-# SMTP服务器设置
-smtp_server = "smtp.example.com"
-smtp_port = 587
-smtp_tls = True  # 是否使用TLS加密
-
-# SMTP登录凭据（如果需要）
-smtp_username = "your_email@example.com"
-smtp_password = "your_email_password"
-```
-
-### 4. 调度配置
-
-```python
-# 每日执行时间（24小时制）
-schedule_time = "09:00"
-```
-
-## 运行方式
-
-### 单次运行
+### Run Locally
 
 ```bash
 python main.py
 ```
 
-### 后台持续运行
+### GitHub Actions (Recommended)
 
-```bash
-# Linux/Mac
-nohup python main.py > output.log 2>&1 &
+1. Fork this repository
+2. Configure secrets and variables as described above
+3. The workflow will run automatically daily at the scheduled time
 
-# Windows（使用PowerShell）
-Start-Process python -ArgumentList "main.py" -WindowStyle Hidden
-```
+## Troubleshooting
 
-## 常见问题
+### 1. Failed to connect to SMTP server
 
-### 1. 无法连接到SMTP服务器
+**Solutions:**
+- Check SMTP server address and port correctness
+- Ensure TLS/SSL encryption is properly configured
+- Verify email username and password
+- For Gmail users, enable "Less secure app access" or use app-specific passwords
 
-**解决方案**：
-- 检查SMTP服务器地址和端口是否正确
-- 确认是否启用了TLS/SSL加密
-- 验证邮箱用户名和密码是否正确
-- 对于Gmail用户，需要启用"不太安全的应用访问"或使用应用专用密码
+### 2. Model loading failure
 
-### 2. 模型加载失败
+**Solutions:**
+- Check network connection to ensure model can be downloaded
+- Try using a smaller model
+- Manually download the model and specify local path
 
-**解决方案**：
-- 检查网络连接，确保能够下载模型
-- 尝试使用更小的模型（如all-MiniLM-L6-v2）
-- 手动下载模型并指定本地路径
+### 3. No relevant papers found
 
-### 3. 没有找到相关论文
+**Solutions:**
+- Check keyword correctness, try using broader keywords
+- Reduce ArXiv category restrictions
+- Increase `MAX_PAPER_NUM` parameter value
 
-**解决方案**：
-- 检查关键字是否正确，尝试使用更广泛的关键字
-- 减少ArXiv分类限制
-- 增加max_papers参数值
+### 4. Slow execution
 
-### 4. 运行速度慢
+**Solutions:**
+- Use a smaller LLM model
+- Reduce `MAX_PAPER_NUM` parameter value
+- Consider running in an environment with GPU (sentence-transformers supports GPU acceleration)
 
-**解决方案**：
-- 使用更小的LLM模型
-- 减少max_papers参数值
-- 考虑在有GPU的环境中运行（sentence-transformers支持GPU加速）
+## Technology Stack
 
-## 技术栈
+- **Python 3.7+**: Main development language
+- **arxiv**: ArXiv API client
+- **llama_cpp**: Local LLM integration
+- **openai**: OpenAI API integration (optional)
+- **sentence-transformers**: Text embedding generation
+- **scikit-learn**: Similarity calculation
+- **schedule**: Scheduled task management
+- **smtplib**: Email sending
+- **GitHub Actions**: Continuous integration and deployment
 
-- **Python 3.7+**：主要开发语言
-- **arxiv**：ArXiv API客户端
-- **sentence-transformers**：本地LLM和文本嵌入生成
-- **scikit-learn**：相似度计算
-- **schedule**：定时任务调度
-- **smtplib**：邮件发送
-
-## 扩展建议
-
-- 添加论文PDF自动下载功能
-- 支持更多学术论文来源（如IEEE Xplore、ACM Digital Library等）
-- 实现Web界面用于配置管理
-- 添加论文分类和主题聚类功能
-- 支持多用户配置
-
-## 许可证
+## License
 
 MIT License
 
-## 贡献
+## Contributing
 
-欢迎提交Issue和Pull Request！
+Issue and Pull Request are welcome!
 
-## 更新日志
+## Changelog
 
 ### v1.0.0 (2024-01-15)
-- 初始版本发布
-- 实现核心功能：ArXiv检索、本地LLM解析、相似度计算、邮件发送和定时调度
+- Initial version release
+- Implemented core features: ArXiv retrieval, local LLM parsing, similarity calculation, email sending, and scheduled execution
 
 ---
 
-**注意**：首次运行时，程序会自动下载指定的LLM模型到本地`./models`目录，请确保网络连接正常。
+**Note**: When running for the first time, the program will automatically download the specified LLM model to the local `./models` directory. Ensure network connection is available.

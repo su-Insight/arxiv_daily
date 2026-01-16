@@ -1,12 +1,11 @@
-import logging
 from typing import List, Tuple
-from paper import ArxivPaper
-from llm import LLM, set_global_llm
+from .paper import ArxivPaper
+from .llm import LLM, set_global_llm
 import time
+from loguru import logger
+import json
 
-logger = logging.getLogger(__name__)
-
-def rerank_paper(papers: List[ArxivPaper], retriever_target: str, model: str = "meta-llama/Llama-3.2-3B-Instruct", model_url: str = "llama-3.2-3b-instruct.Q4_K_M.gguf") -> List[ArxivPaper]:
+def rerank_paper(papers: List[ArxivPaper], retriever_target: str, model: str = "bartowski/Llama-3.2-3B-Instruct-GGUF", model_url: str = "Llama-3.2-3B-Instruct-Q4_K_M.gguf") -> List[ArxivPaper]:
     """
     使用Llama-3.2-3B-Instruct模型对论文进行语义排序
     
@@ -55,73 +54,125 @@ def rerank_paper(papers: List[ArxivPaper], retriever_target: str, model: str = "
     return sorted_papers
 
 
-def calculate_paper_score(paper: ArxivPaper, interests: List[str]) -> float:
+def truncate_interest(interest: str, max_length: int = 40) -> str:
     """
-    计算论文与感兴趣方向的相关性分数
+    截断interest文本，超过max_length长度的末尾用省略号替换
     
     Args:
-        paper: 论文对象
-        interests: 感兴趣的方向列表
-    
+        interest: 要截断的interest文本
+        max_length: 最大文本长度（默认40个字符）
+        
     Returns:
-        最高相关性分数（0-100）
+        截断后的interest文本
     """
-    from llm import get_llm
+    if len(interest) <= max_length:
+        return interest
+    
+    # 固定长度40个字符，超出部分在后面使用...隐藏
+    return interest[:max_length - 3] + "..."
+
+
+def calculate_paper_score(paper: ArxivPaper, interests: List[str]) -> float:
+    from .llm import get_llm
     llm = get_llm()
-    
-    # 少样本提示示例
-    few_shot_examples = """
-    Example 1:
-    Interest: Machine Learning
-    Paper Title: Attention Is All You Need
-    Paper Abstract: The dominant sequence transduction models are based on complex recurrent or convolutional neural networks...
-    Score: 95
-    
-    Example 2:
-    Interest: Computer Vision
-    Paper Title: Attention Is All You Need
-    Paper Abstract: The dominant sequence transduction models are based on complex recurrent or convolutional neural networks...
-    Score: 70
-    
-    Example 3:
-    Interest: Quantum Computing
-    Paper Title: Attention Is All You Need
-    Paper Abstract: The dominant sequence transduction models are based on complex recurrent or convolutional neural networks...
-    Score: 20
+
+    # 1. 定义 Few-Shot 例子
+    # 这里的例子要涵盖：极其相关、中等相关、完全不相关三种情况
+    few_shot_context = """
+    ### Examples:
+    User Interests: ["LLM", "Software Testing"]
+
+    Example 1 (Highly Relevant):
+    Title: "Unit Test Generation using Large Language Models"
+    Abstract: "This paper investigates the effectiveness of using Large Language Models (LLMs) like GPT-4 to automate unit test generation for Java projects. We evaluate the syntactic correctness and coverage of the generated tests compared to traditional search-based software testing (SBST) techniques."
+    Output: {"LLM": 95, "Software Testing": 98}
+
+    Example 2 (Partially Relevant):
+    Title: "Auto-GPT: An Autonomous GPT-4 Experiment for Business Automation"
+    Abstract: "We present an open-source experiment to make GPT-4 fully autonomous. By chaining LLM "thoughts", the system can independently achieve goals like market research and code debugging. We analyze the reliability and safety challenges in these autonomous loops."
+    Output: {"LLM": 92, "Software Testing": 40}
+
+    Example 3 (Irrelevant):
+    Title: "Quantum Approximate Optimization Algorithms for Graph Coloring"
+    Abstract: "We propose a hybrid quantum-classical algorithm for the graph coloring problem. By utilizing QAOA on a 50-qubit processor, we demonstrate a speedup in finding optimal colorings for sparse graphs."
+    Output: {"LLM": 5, "Software Testing": 0}
     """
+
+    # 2. 构造当前的任务 Prompt
+    # 将你的 Interests 列表转为 JSON 字符串
+    target_interests = json.dumps(interests)
     
-    # 为每个感兴趣的方向单独打分
-    scores = []
-    for interest in interests:
-        prompt = f"""
-        You are an expert in academic paper analysis. Your task is to score the relevance of a paper to a specific research interest on a scale of 0 to 100, where 100 is extremely relevant and 0 is completely irrelevant.
+    prompt = f"""
+        ### [Detailed Interest Analysis]
+        Please evaluate the paper based on these three specific dimensions (0-10 points each):
         
-        {few_shot_examples}
+        1. Domain Overlap (0-10):
+           - Assess whether the research scope falls within the sub-fields defined in [RETRIEVER_TARGET].
+           - 0: Completely irrelevant; 10: Core domain is highly consistent.
         
-        Interest: {interest}
+        2. Problem Alignment (0-10):
+           - Does the specific problem addressed (e.g., efficiency, reliability, novelty, robustness) align with the user's primary concerns?
+           - Consider if the research motivation addresses practical pain points in the user's research or engineering workflows.
+        
+        3. Methodological Synergy (0-10):
+           - Does the technical approach (e.g., Reinforcement Learning, Chain-of-Thought, Edge Detection, Model Compression) match the user's technical stack?
+           - Even if the domain slightly diverges, check if the implementation provides direct reference or inspirational value.
+        
+        ### [Scoring Logic]
+        Final Score Calculation Formula:
+        $$Total Score = (Domain * 0.3 + Problem * 0.3 + Method * 0.4) * 10$$
+
+        ### [Example]
+        {few_shot_context}
+
+        ### [Current Task]
+        Current User Interests: {target_interests}
         Paper Title: {paper.title}
-        Paper Abstract: {paper.summary}
-        Score:
-        """
-        
-        try:
-            response = llm.generate([
-                {"role": "system", "content": "You are an expert in academic paper analysis."},
-                {"role": "user", "content": prompt}
-            ])
+        Paper Abstract: {paper.summary[:1200]}
+
+        ### [Requirement]
+        - Return ONLY the JSON object.
+        - The keys in the JSON must EXACTLY match the provided "Current User Interests" list.
+        - Include EVERY interest from the list, even if the score is low. Do not add any extra categories.
+        - Scores must be integers between 0 and 100.
+        - Granularity Trigger: Avoid scores that are multiples of 5 (e.g., 70, 75, 80) to ensure higher ranking granularity
+        - No explanation.
+
+        Output:"""
+
+    try:
+        response = llm.generate([
+            {"role": "system", "content": "You are a research assistant that evaluates paper relevance in JSON format."},
+            {"role": "user", "content": prompt}
+        ])
+
+        # 3. 稳健的 JSON 提取
+        import re
+        match = re.search(r'\{.*\}', response, re.DOTALL)
+        if match:
+            scores_dict = json.loads(match.group())
             
-            # 解析分数
-            score = float(response.strip())
-            scores.append(score)
-            logger.debug(f"  Interest: {interest}, Score: {score}")
-        except Exception as e:
-            logger.error(f"Failed to calculate score for interest '{interest}': {e}")
-            scores.append(0)
+            # 更新paper对象的interest_scores属性
+            paper.interest_scores = scores_dict
+
+            print(scores_dict)
+            
+            # 收集所有分数>=80的interest，存储完整文本
+            paper.high_score_interests = []
+            if scores_dict:
+                for interest, score in scores_dict.items():
+                    if score >= 80:
+                        paper.high_score_interests.append(interest)
+                
+                # 设置总分数为最高分
+                paper.score = float(max(scores_dict.values()))
+            
+            return paper.score
+            
+    except Exception as e:
+        logger.error(f"Few-shot scoring failed: {e}")
+        paper.score = 0.0
+        return paper.score
     
-    # 返回最高分
-    if scores:
-        max_score = max(scores)
-        logger.debug(f"  Maximum score: {max_score}")
-        return max_score
-    else:
-        return 0
+    paper.score = 0.0
+    return paper.score
