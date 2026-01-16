@@ -34,6 +34,7 @@ jobs:
       - name: Run Script
         env:
           SEND_EMPTY: ${{ vars.SEND_EMPTY }}
+          RETRIEVER_TARGET: ${{ vars.RETRIEVER_TARGET }}
           ARXIV_QUERY: ${{ secrets.ARXIV_QUERY }}
           SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
           SMTP_PORT: ${{ secrets.SMTP_PORT }}
