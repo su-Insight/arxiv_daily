@@ -1,4 +1,6 @@
 import json
+
+from main import get_arxiv_paper
 from src.rerank import rerank_paper  # 确保路径正确
 
 # 1. 模拟论文对象类
@@ -12,7 +14,10 @@ class MockPaper:
 # 2. 准备测试用例
 def run_semantic_test():
     # 兴趣目标：LLM 算法与推理优化
-    target = "Large Language Models Reasoning and Inference Optimization"
+    target = '''Reinforcement learning and preference alignment for large language models
+                Architecture and parameter efficiency optimization for LLMs
+                Autonomous agents, planning, and multi-step reasoning systems
+                Evolution and advanced techniques in Retrieval-Augmented Generation'''
     # target = "Applications of Large Language Models"
 
     test_papers = [
@@ -82,9 +87,11 @@ def run_semantic_test():
 
     print(f"🔍 Testing Semantic Discrimination for: '{target}'\n")
 
+
+    papers = get_arxiv_paper("cs.AI+cs.CV+cs.LG")
     # 3. 调用你的重排序函数
     # 注意：这里会加载本地 Llama 模型，第一次运行可能较慢
-    results = rerank_paper(test_papers, target)
+    results = rerank_paper(papers, target)
 
     # 4. 结果分析
     print("\n--- Test Results ---")

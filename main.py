@@ -76,8 +76,7 @@ if __name__ == '__main__':
     add_argument(
         "--retriever_target",
         type=str,
-        help="Retriever target domain, such as 'agent' or 'software test'",
-        default="LLM",
+        help="Retriever target domain, such as 'agent' or 'software test'"
     )
     add_argument(
         "--use_llm_api",
