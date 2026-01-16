@@ -13,7 +13,7 @@ class MockPaper:
 def run_semantic_test():
     # 兴趣目标：LLM 算法与推理优化
     target = "Large Language Models Reasoning and Inference Optimization"
-    target = "Applications of Large Language Models"
+    # target = "Applications of Large Language Models"
 
     test_papers = [
         # --- 1. 核心目标 (应得高分: 90-100) ---
