@@ -142,11 +142,11 @@ Before officially starting the daily automatic push, you can verify the configur
 <div align="left">
 
 | <img width="893" height="247" alt="image" src="https://github.com/user-attachments/assets/7aba0dc4-d1d8-413c-9d22-c77f2d8da110" /> |
-
 | :---: |
 
-
 </div>
+
+
 
 > [!NOTE]
 > **Test Version vs Formal Version**:
