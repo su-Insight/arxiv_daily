@@ -141,7 +141,7 @@ def get_block_html(title:str, authors:str, rate:str, score:float,arxiv_id:str, a
         for interest in high_score_interests:
             # 在显示时截断文本，但title属性使用完整文本
             truncated_interest = truncate_interest(interest)
-            interest_tags += f'<span class="interest-tag" data-full-interest="{interest}" title="{interest}" style="display: inline-block; background-color: #4CAF50; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; margin-left: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">{truncated_interest}</span>'
+            interest_tags += f'<span class="interest-tag" data-full-interest="{interest}" title="{interest}" style="display: inline-block; background-color: #4CAF50; color: white; padding: 3px 6px; border-radius: 10px; font-size: 10px; font-weight: bold; margin-left: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; line-height: 1.2; box-sizing: border-box;">{truncated_interest}</span>'
     
     block_template = f"""
     <div class="paper-block">
