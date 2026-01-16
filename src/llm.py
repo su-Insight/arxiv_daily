@@ -9,7 +9,7 @@ GLOBAL_LLM = None
 class LLM:
     def __init__(self, api_key: str = None, base_url: str = None, 
                 model: str = "bartowski/Llama-3.2-3B-Instruct-GGUF", model_path: str = "Llama-3.2-3B-Instruct-Q4_K_M.gguf", 
-                n_ctx: int = 5000, n_threads: int = 4, verbose: bool = False,
+                n_ctx: int = 15000, n_threads: int = 4, verbose: bool = False,
                 lang:str = "English"):
         self.model = model
         self.lang = lang

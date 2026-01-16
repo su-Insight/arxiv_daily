@@ -133,6 +133,7 @@ Software Testing: Domain(3), Problem(2), Method(1) -> (0.9 + 0.6 + 0.4) * 10 = 1
 
 
         ### [Example]
+        {few_shot_context}
         
         ### [Constraints]
         - Capture micro-details from the abstract for scoring, rather than relying solely on high-level title keywords.
