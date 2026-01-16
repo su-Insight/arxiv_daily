@@ -140,9 +140,11 @@ Before officially starting the daily automatic push, you can verify the configur
 3. Click the **`Run workflow`** dropdown on the right, and click the green **`Run workflow`** button.
 
 <div align="left">
-  
-| <img width="893" height="247" alt="image" src="[https://github.com/user-attachments/assets/39254b38-5298-4d9b-b82f-3a06b5707a66](https://github.com/user-attachments/assets/39254b38-5298-4d9b-b82f-3a06b5707a66)" /> |
+
+| <img width="893" height="247" alt="image" src="https://github.com/user-attachments/assets/7aba0dc4-d1d8-413c-9d22-c77f2d8da110" /> |
+
 | :---: |
+
 
 </div>
 
