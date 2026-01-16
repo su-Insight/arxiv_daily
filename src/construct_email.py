@@ -132,12 +132,16 @@ def get_empty_html():
 def get_block_html(title:str, authors:str, rate:str, score:float,arxiv_id:str, abstract:str, pdf_url:str, code_url:str=None, affiliations:str=None, high_score_interests:list=None):
     code = f'<a href="{code_url}" style="display: inline-block; text-decoration: none; font-size: 14px; font-weight: bold; color: #fff; background-color: #5bc0de; padding: 8px 16px; border-radius: 4px; margin-left: 8px;">Code</a>' if code_url else ''
     
+    # 导入截断函数
+    from src.rerank import truncate_interest
+    
     # 生成多个interest标签
     interest_tags = ''
     if high_score_interests and isinstance(high_score_interests, list):
         for interest in high_score_interests:
-            # 存储完整的兴趣文本在data属性中，用于自适应显示
-            interest_tags += f'<span class="interest-tag" data-full-interest="{interest}" title="{interest}" style="display: inline-block; background-color: #4CAF50; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; margin-left: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">{interest}</span>'
+            # 在显示时截断文本，但title属性使用完整文本
+            truncated_interest = truncate_interest(interest)
+            interest_tags += f'<span class="interest-tag" data-full-interest="{interest}" title="{interest}" style="display: inline-block; background-color: #4CAF50; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; margin-left: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">{truncated_interest}</span>'
     
     block_template = f"""
     <div class="paper-block">

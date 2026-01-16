@@ -159,13 +159,12 @@ def calculate_paper_score(paper: ArxivPaper, interests: List[str]) -> float:
 
             print(scores_dict)
             
-            # 收集所有分数>=80的interest，并截断长文本
+            # 收集所有分数>=80的interest，存储完整文本
             paper.high_score_interests = []
             if scores_dict:
                 for interest, score in scores_dict.items():
                     if score >= 80:
-                        truncated_interest = truncate_interest(interest)
-                        paper.high_score_interests.append(truncated_interest)
+                        paper.high_score_interests.append(interest)
                 
                 # 设置总分数为最高分
                 paper.score = float(max(scores_dict.values()))
