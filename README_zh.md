@@ -40,7 +40,15 @@
 
 ## 📷 效果展示
 
-![screenshot](https://via.placeholder.com/800x600?text=ArXiv+Radar+Email+Screenshot)
+
+<div align="left">
+  
+| <img width="882" height="697" alt="image" src="https://github.com/user-attachments/assets/a4ded5b7-b673-4e7c-a882-1c2ef2f47a21" /> |
+| :---: |
+
+</div>
+
+
 
 ## 🚀 使用指南
 
@@ -132,6 +140,13 @@ Edge Detection
 1. 进入您 Fork 仓库的 **Actions** 选项卡。
 2. 在左侧列表中选择 **`Test-Daily Paper Sender`**。
 3. 点击右侧的 **`Run workflow`** 下拉菜单，点击绿色的 **`Run workflow`** 按钮。
+
+<div align="left">
+  
+| <img width="893" height="247" alt="image" src="https://github.com/user-attachments/assets/39254b38-5298-4d9b-b82f-3a06b5707a66" /> |
+| :---: |
+
+</div>
 
 > [!NOTE]
 > **测试版 vs 正式版**：
