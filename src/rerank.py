@@ -81,32 +81,24 @@ def calculate_paper_score(paper: ArxivPaper, interests: List[str]) -> float:
     # 1. 定义 Few-Shot 例子
     # 这里的例子要涵盖：极其相关、中等相关、完全不相关三种情况
     few_shot_context = """
-        Example 1: High Relevance
-        - User Interests: ["AI Agents", "Software Testing"]
-        - Title: "DeepRegression: A Multi-Agent Reinforcement Learning Framework for Autonomous Flaky Test Identification"
-        - Abstract: "Non-deterministic test failures, or flaky tests, represent a significant bottleneck in modern CI/CD pipelines. We introduce DeepRegression, a framework that deploys a swarm of LLM-based agents to autonomously explore execution traces and commit histories. Unlike static analyzers, our agents utilize Reinforcement Learning (RL) to develop search policies that prioritize high-entropy log segments. We evaluated DeepRegression on a dataset of 1,000 Open-source projects, demonstrating a 25% improvement in root cause localization. The system features a self-correcting feedback loop where agents refine their prompts based on the success of proposed patches."
-        - Internal Logic:
-        AI Agents: Domain(10), Problem(10), Method(10) -> (3.0 + 3.0 + 4.0) * 10 = 100
-        Software Testing: Domain(10), Problem(10), Method(9) -> (3.0 + 3.0 + 3.6) * 10 = 96
-        - Output: {"AI Agents": 100, "Software Testing": 96}
+    ### Examples:
+    User Interests: ["LLM", "Software Testing"]
 
-        Example 2: Methodological Synergy
-        - User Interests: ["AI Agents", "Software Testing"]
-        - Title: "Adaptive Resource Allocation in Cloud Data Centers via Decentralized Autonomous Agents"
-        - Abstract: "Efficient resource management is critical for minimizing latency in cloud environments. This paper proposes a decentralized architecture where individual compute nodes are managed by autonomous agents. These agents employ a hierarchical planning strategy to negotiate task offloading under strict SLA constraints. We utilize a transformer-based world model to predict future workload spikes. While the application is infrastructure management, the multi-agent negotiation protocols and predictive modeling of system uncertainty offer significant parallels to resolving concurrency issues in complex software build environments."
-        - Internal Logic:AI Agents: 
-        Domain(7), Problem(4), Method(9) -> (2.1 + 1.2 + 3.6) * 10 = 69
-        Software Testing: Domain(3), Problem(2), Method(4) -> (0.9 + 0.6 + 1.6) * 10 = 31
-        - Output: {"AI Agents": 69, "Software Testing": 31}
+    Example 1 (Highly Relevant):
+    Title: "Unit Test Generation using Large Language Models"
+    Abstract: "This paper investigates the effectiveness of using Large Language Models (LLMs) like GPT-4 to automate unit test generation for Java projects. We evaluate the syntactic correctness and coverage of the generated tests compared to traditional search-based software testing (SBST) techniques."
+    Output: {"LLM": 95, "Software Testing": 98}
 
-        Example 3: Marginal Relevance
-        - User Interests: ["AI Agents", "Software Testing"]
-        - Title: "A Qualitative Study on the Impact of Generative AI Chatbots in Undergraduate Software Engineering Education"
-        - Abstract: "As Generative AI becomes ubiquitous, its role in education must be examined. We conducted a semester-long study to observe how undergraduate students use AI-powered chatbots (referred to as educational agents) during their introductory software testing course. Through surveys and interview data, we analyzed whether these tools helped students write better unit tests or if they encouraged academic dishonesty. Our findings suggest that while these 'agents' can provide quick templates, they often hallucinate incorrect testing syntax and do not significantly improve the students' conceptual understanding of code coverage."
-        - Internal Logic:AI Agents: Domain(2), Problem(1), Method(1) -> (0.6 + 0.3 + 0.4) * 10 = 13
-        Software Testing: Domain(3), Problem(2), Method(1) -> (0.9 + 0.6 + 0.4) * 10 = 19
-        - Output: {"AI Agents": 13, "Software Testing": 19}
-        """
+    Example 2 (Partially Relevant):
+    Title: "Auto-GPT: An Autonomous GPT-4 Experiment for Business Automation"
+    Abstract: "We present an open-source experiment to make GPT-4 fully autonomous. By chaining LLM "thoughts", the system can independently achieve goals like market research and code debugging. We analyze the reliability and safety challenges in these autonomous loops."
+    Output: {"LLM": 92, "Software Testing": 40}
+
+    Example 3 (Irrelevant):
+    Title: "Quantum Approximate Optimization Algorithms for Graph Coloring"
+    Abstract: "We propose a hybrid quantum-classical algorithm for the graph coloring problem. By utilizing QAOA on a 50-qubit processor, we demonstrate a speedup in finding optimal colorings for sparse graphs."
+    Output: {"LLM": 5, "Software Testing": 0}
+    """
 
     # 2. 构造当前的任务 Prompt
     # 将你的 Interests 列表转为 JSON 字符串
@@ -143,6 +135,7 @@ def calculate_paper_score(paper: ArxivPaper, interests: List[str]) -> float:
         ### [Requirement]
         - Return ONLY the JSON object.
         - Scores must be integers between 0 and 100.
+        - Granularity Trigger: Avoid scores that are multiples of 5 (e.g., 70, 75, 80) to ensure higher ranking granularity. Prefer specific, nuanced values such as 72, 78, 83, or 89.
         - No explanation.
 
         Output:"""
