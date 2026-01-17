@@ -90,6 +90,8 @@
 | RECEIVER | ✅ | str | 接收论文列表的邮箱 | target@outlook.com |
 | USE_LLM_API | | bool | 是否使用云端 API (默认为 False) | False |
 | OPENAI_API_KEY | | str | API Key (若使用 API 则必填) | sk-xxxxxxxx |
+| OPENAI_API_BASE | | str | 使用 API 访问 LLM 时的 API URL。如果不填写，默认为 OpenAI URL | https://api.siliconflow.cn/v1 |
+| MODEL_NAME | | str | 使用 API 访问 LLM 时的模型名称。如果不填写，默认为 gpt-4o。使用 SiliconFlow 时推荐 Qwen/Qwen2.5-7B-Instruct | Qwen/Qwen2.5-7B-Instruct |
 > SMTP的申请直接在网页搜索对应邮箱+SMTP即可
 3. **设置 Repository Variables** (公开变量，方便随时修改)：
 

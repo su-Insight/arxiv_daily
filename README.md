@@ -61,8 +61,8 @@ Configure the following secrets and variables in your GitHub repository:
 - `SENDER_PASSWORD`: Sender email password
 - `USE_LLM_API`: Whether to use OpenAI API (true/false)
 - `OPENAI_API_KEY`: OpenAI API key (required if USE_LLM_API is true)
-- `OPENAI_API_BASE`: OpenAI API base URL (optional)
-- `MODEL_NAME`: OpenAI model name (optional, default: gpt-4o)
+- `OPENAI_API_BASE`: API URL when using the API to access LLMs. If not filled in, the default is the OpenAI URL. Example: https://api.siliconflow.cn/v1
+- `MODEL_NAME`: Model name when using the API to access LLMs. If not filled in, the default is gpt-4o. Qwen/Qwen2.5-7B-Instruct is recommended when using SiliconFlow.
 
 **Variables:**
 - `REPOSITORY`: Repository name (default: your GitHub username/arxiv_radar)
