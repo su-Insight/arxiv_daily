@@ -84,6 +84,8 @@ Powered by **GitHub Actions**, it provides a **zero-cost**, **zero-installation*
 | RECEIVER | ✅ | str | Email to receive the paper list. | target@outlook.com |
 | USE_LLM_API | | bool | Whether to use cloud API (Default is False). | False |
 | OPENAI_API_KEY | | str | API Key (Required if using API). | sk-xxxxxxxx |
+| OPENAI_API_BASE | | str | API URL when using the API to access LLMs. If not filled in, the default is the OpenAI URL. | https://api.siliconflow.cn/v1 |
+| MODEL_NAME | | str | Model name when using the API to access LLMs. If not filled in, the default is gpt-4o. Qwen/Qwen2.5-7B-Instruct is recommended when using SiliconFlow. | Qwen/Qwen2.5-7B-Instruct |
 > For SMTP application, search directly for the corresponding email + SMTP on the web.
 
 3. **Set Repository Variables** (Public variables, convenient for modifications):
