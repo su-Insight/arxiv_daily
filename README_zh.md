@@ -5,11 +5,6 @@
 <h3 align="center">ArXiv Radar</h3>
 
 
-<p align="center">
-  <a href="README.md">English</a> | <a href="README_zh.md">简体中文</a>
-</p>
-
-
 <div align="center">
 
   ![Status](https://img.shields.io/badge/status-active-success.svg)
