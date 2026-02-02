@@ -16,7 +16,7 @@
 </div>
 
 <p align="center">
-  <a href="README.md">English</a> | <a href="README_zh.md">简体中文</a>
+  <a href="README_en.md">English</a> | <a href="README.md">简体中文</a>
 </p>
 
 <p align="center"> 🚀 每日根据您的科研兴趣，利用本地 LLM 智能检索、语义重排并推送 ArXiv 最新论文。
